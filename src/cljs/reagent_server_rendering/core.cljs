@@ -2,11 +2,11 @@
     (:require [reagent.core :as reagent]))
 
 (defn home-page []
-  [:div [:h2 "Welcome to {{name}}"]
+  [:div [:h2 "Welcome to reagent-server-rendering"]
    [:div [:a {:href "/about"} "go to about page"]]])
 
 (defn about-page []
-  [:div [:h2 "About {{name}}"]
+  [:div [:h2 "About reagent-server-rendering"]
    [:div [:a {:href "/"} "go to the home page"]]])
 
 (def pages
