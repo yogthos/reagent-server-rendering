@@ -1,4 +1,4 @@
-(defproject reagent-server-rendering "0.1.0-SNAPSHOT"
+(defproject reagent-server-rendering "0.1.0"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.122"]
                  [reagent "0.5.1"]
@@ -12,8 +12,7 @@
   :plugins [[lein-cljsbuild "1.0.6"]
             [lein-ring "0.9.6"]]
 
-  :ring {:handler reagent-server-rendering.handler/app
-         :uberwar-name "{{name}}.war"}
+  :ring {:handler reagent-server-rendering.handler/app}
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target" "test/js"]
 
