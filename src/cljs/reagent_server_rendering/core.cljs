@@ -10,12 +10,12 @@
    [:div [:a {:href "/"} "go to the home page"]]])
 
 (def pages
-  {"home"  home-page
-   "about" about-page})
+  {"/"  home-page
+   "/about" about-page})
 
-(defn ^:export render-page [page-id]
-  (reagent/render-to-string [(get pages page-id)]))
+(defn ^:export render-page [uri]
+  (reagent/render-to-string [(get pages uri)]))
 
-(defn ^:export main [page-id]
-  (reagent/render [(get pages page-id)] (.getElementById js/document "app")))
+(defn ^:export main [uri]
+  (reagent/render [(get pages uri)] (.getElementById js/document "app")))
 

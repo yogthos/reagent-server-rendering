@@ -5,9 +5,12 @@
             [hiccup.page :refer [include-js include-css]]
             [compojure.core :refer [GET defroutes]]
             [compojure.route :refer [not-found resources]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [reagent-server-rendering.cache :as cache])
   (:import [io.aleph.dirigiste Pools]
            [javax.script ScriptEngineManager Invocable]))
+
+(defonce C (cache/create-cache))
 
 (defn- create-js-engine []
   (doto (.getEngineByName (ScriptEngineManager.) "nashorn")
@@ -32,7 +35,7 @@
            "render_page" (object-array [page-id]))
          (finally (flow/release js-engine-pool js-engine-key js-engine)))))
 
-(defn page [page-id]
+(defn page [uri]
   (html
    [:html
     [:head
@@ -42,15 +45,26 @@
      (include-css "css/site.css")]
     [:body
      [:div#app
-      (render-page page-id)]
+      (cache/cached! C uri (render-page uri))
+      ;(render-page uri)
+      ]
      (include-js "js/compiled/app.js")
      [:script {:type "text/javascript"}
-      (str "main('" page-id "');")]]]))
+      (str "reagent_server_rendering.core.main('" uri "');")]]]))
 
 (defroutes app-routes
-  (GET "/" [] (page "home"))
-  (GET "/about" [] (page "about"))
+  (GET "/" req (page (:uri req)))
+  (GET "/about" req (page (:uri req)))
   (resources "/")
   (not-found "Not Found"))
 
-(def app (wrap-defaults app-routes site-defaults))
+(defn wrap-cache-invalidation [handler]
+  (fn [req]
+    (when (not= :get (:request-method req))
+      (cache/invalidate! C (:uri req)))
+    (handler req)))
+
+(def app
+  (-> app-routes
+      wrap-cache-invalidation
+      (wrap-defaults site-defaults)))

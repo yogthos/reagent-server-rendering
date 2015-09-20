@@ -5,7 +5,8 @@
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
                  [hiccup "1.0.5"]
-                 [aleph "0.4.0"]]
+                 [aleph "0.4.0"]
+                 [org.clojure/core.cache "0.6.4"]]
 
   :source-paths ["src/clj"]
 
